@@ -138,7 +138,7 @@ def penality_shootout(output):
 
 
 def subs(start_ids, bench_ids, rate, output):
-    k = 0
+    k = random.randint(0, len(start_ids)-1)
     for i in range(k,len(start_ids)):
         player_out = Player.objects.get(id=start_ids[i])
         player_out_name = player_out.name
