@@ -48,7 +48,7 @@ def goal_kicking(P1_attack, team, output, s, minute, rate):
     if team == "Barcelona":
         s[0] += 1
         P1_defense = Player.objects.filter(team='Juventus', position='STR', is_starting=True).first()
-        team == 'Juventus'
+        team = 'Juventus'
     else:
         s[1] += 1
         P1_defense = Player.objects.filter(team='Barcelona', position='STR', is_starting=True).first()
@@ -144,7 +144,7 @@ def subs(start_ids, bench_ids, rate, output):
         player_out_name = player_out.name
         pos_out = player_out.position
         if rate.get(player_out_name, 5) <= 6:
-            player_out.in_starting = False
+            player_out.is_starting = False
             for j in range(len(bench_ids)):
                 player_in = Player.objects.get(id=bench_ids[j])
                 player_in_name = player_in.name
