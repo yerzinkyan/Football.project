@@ -169,13 +169,14 @@ def barca_vs_juve(request):
         time.sleep(0.5)
 
     adding_time(i, output)
-    score[0] = score[1] = 2
+    
     print(f'\n///// THE MATCH IS ENDED/////')
     print(f'/////BARCELONA {score[0]} - {score[1]} JUVENTUS/////')
     output.append(f'</br>/////THE MATCH IS ENDED/////')
     output.append(f'/////BARCELONA {score[0]} - {score[1]} JUVENTUS /////')
 
-    penality_shootout(output)
+    if score[0] == score[1]:
+        penality_shootout(output)
     
 
     print("\n************* Ratings of footballers *************")
