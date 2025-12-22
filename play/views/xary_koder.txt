@@ -1,0 +1,257 @@
+BARCA_IDS = list(range(2, 12))
+JUVE_IDS = list(range(23, 34))
+score = [0, 0]
+def assisting(current_team, current_player):
+    if current_team == "Barcelona":
+        ids = BARCA_IDS
+        enemy_ids = JUVE_IDS
+    else:
+        ids = JUVE_IDS
+        enemy_ids = BARCA_IDS
+
+    possible_targets = [x for x in ids if x != current_player.id]
+
+    if not possible_targets:
+        # Եթե ոչինչ չկա՝ փոխում ենք թիմը
+        new_team = "Juventus" if current_team == "Barcelona" else "Barcelona"
+        new_player = Player.objects.get(id=random.choice(enemy_ids))
+        msg = f"No teammates available → switched to {new_team} - {new_player.name}"
+        return new_team, new_player, msg
+
+    try:
+        target_id = random.choice(possible_targets)
+        target_player = Player.objects.get(id=target_id)
+    except Player.DoesNotExist:
+        return current_team, current_player, "Player missing in DB → skipping"
+
+    success = random.choices(["ok", "fail"], weights=[80, 20], k=1)[0]
+
+    if success == "ok":
+        msg = f"{current_player.number}.{current_player.name} passed to {target_player.number}.{target_player.name}"
+        return current_team, target_player, msg
+    else:
+        new_team = "Juventus" if current_team == "Barcelona" else "Barcelona"
+        new_player = Player.objects.get(id=random.choice(enemy_ids))
+        msg = f"{current_player.number}.{current_player.name} lost the ball! Ball now with {new_team} - {new_player.number}.{new_player.name}"
+        return new_team, new_player, msg
+
+def shooting(current_team, current_player, score): # ԿԱՐԻՔ ՉԿԱ 'msg'-Ի, եթե այն հենց shooting-ում է ստեղծվում
+    """Attempt a shot. Returns new_team, new_player, message, score"""
+    success = random.choices(["ok", "fail"], weights=[30, 70], k=1)[0]  # 30% chance goal
+    
+    # ... (կոդի մարմինը նույնն է)
+
+    if success == "ok":
+        # ... (Գոլի կոդը)
+        msg = f"{current_player.number}.{current_player.name} SHOOTING → GOOOAAAL! Score: Barcelona {score[0]} - Juventus {score[1]}"
+        new_team = "Juventus" if current_team == "Barcelona" else "Barcelona"
+        new_player = Player.objects.get(id=23)
+        return new_team, new_player, msg, score # Վերադարձնում է 4 արժեք
+    else:
+        new_team = "Juventus" if current_team == "Barcelona" else "Barcelona"
+        new_player = Player.objects.get(id=33)
+        msg = f"{current_player.number}.{current_player.name} missed the shot! Ball now with {new_team} - {new_player.number}.{new_player.name}"
+        print(msg)
+        return new_team, new_player, msg, score
+
+def adding_time(): 
+        t = random.randint(1, 3) 
+        print(f"/////Referee is adding {t} minuytes of stoppage time/////") 
+        for i in range(t): 
+            time.sleep(0.5) 
+            print(f"time = 45 + {i+1} minutes")
+            print("/////The first half is over, we'll be back after the break./////")
+
+output_lines = []
+def assisit_shoot(duration_seconds=25):
+    score = [0, 0]
+    start_time = time.time()
+    current_team = random.choice(["Barcelona", "Juventus"])
+
+    if current_team == "Barcelona":
+        current_player = Player.objects.get(id=random.choice(BARCA_IDS))
+    else:
+        current_player = Player.objects.get(id=random.choice(JUVE_IDS))
+
+        
+    output_lines.append("\n**** SCORE: 0 - 0 ****\n")
+    output_lines.append(f"The match will be started by {current_team}\n\n")
+    print(f"\n**** SCORE: 0 - 0 ****")
+    print(f"The match will be started by {current_team}\n")
+
+    while time.time() - start_time < duration_seconds:
+        minute = int(time.time() - start_time) + 1
+
+
+        Versions = ["passing", "kicking"]
+        version = random.choices(Versions, weights=[80, 20], k=1)[0]
+        
+
+
+
+        if version == "passing":
+            assisting(current_team, current_player)
+            team, player, msg = assisting(current_team, current_player)
+        # elif version == 'kicking':
+        #     shooting(team, player, msg)
+        #     team, player, msg = shooting(current_team, current_player, msg)
+            
+    print(f"[Minute {minute}] {msg}")
+    time.sleep(0.5)
+    print(f"First half ended. Final score: Barcelona {score[0]} - Juventus {score[1]}")
+
+            
+
+
+    
+
+
+
+
+
+
+
+# from ..models import Player
+# def stamina_assist_loss(Player):
+#     stamina_delta = random.randint(3, 5)
+#     Player.stamina -= stamina_delta
+#     Player.save()
+#     return Player.stamina
+
+# def stamina_assist_get(Player):
+#     stamina_delta = 1
+#     Player.stamina += stamina_delta
+#     Player.save()
+#     return Player.stamina
+
+# def stamina_kick(Player):
+#     stamina_delta = random.randint(5, 10)
+#     Player.stamina -= stamina_delta
+#     Player.save()
+#     return Player.stamina
+
+# def losing_ball(Player):
+#     print(f"{Player.name} lost the ball")
+#     for i in range(random.randint(1, 2)):
+#         print("The ball is in the opponent's possession.")
+#         time.sleep(0.5)
+        
+# def assisting(P1):
+#     try:
+#         rand_id = random.choice([x for x in range(2, 12) if x != P1.id])
+#         player_two = Player.objects.get(id=rand_id)
+
+#         # stamina_assist_loss(P1)
+#         # stamina_assist_get(player_two)
+#         P1.save()
+#         player_two.save()
+
+#         res = random.choices(
+#             [f"{P1.name} assisted {player_two.name}", f"{P1.name} pass was not correctly"],
+#             weights=[99, 1],
+#             k=1
+#         )[0]
+#         if res == f"{P1.name} assisted {player_two.name}":
+#             print(f"{P1.name} assisted {player_two.name}")
+#             print(f"Stamina: {P1.name}={P1.stamina}, {player_two.name}={player_two.stamina}")
+#             P1 = player_two
+#         else:
+#             print(f"{P1.name} pass was not correctly, {losing_ball(P1)}")
+#             print('\n')
+#             print("Barcelona got back the ball")
+                                
+#     except Player.DoesNotExist:
+#         pass
+#     return(P1)
+
+# def kicking(P1):
+#     kicker = P1
+#     stamina_current_player = stamina_kick (kicker)
+#     kicker.save()
+#     res = (random.choice([f"{kicker.name} kicked the ball, not a goal Stamina={stamina_current_player}", f"{kicker.name} kicked the ball and goooooaaaaal Stamina={kicker.stamina}"]))
+#     if res == f"{kicker.name} kicked the ball, not a goal Stamina={stamina_current_player}":
+#         print(f"{kicker.name} kicked the ball, not a goal Stamina={stamina_current_player}, {losing_ball(P1)}")
+#         print('\n')
+#     else:
+#         print(f"{kicker.name} kicked the ball and goooooaaaaal Stamina={kicker.stamina}")
+#         print('\n')
+
+#     print("Barcelona got back the ball")
+
+# def adding_time():
+#     t = random.randint(1, 3)
+#     print(f"/////Referee is adding {t} minuytes of stoppage time/////")
+#     for i in range(t):
+#         time.sleep(0.5)
+#         print(f"time = 45 + {i+1} minutes")
+#     print("First half ended.\n")
+
+
+
+        
+
+# # /////////////////////////////////////////////////////////////////////////////
+# def first_half_simulation(duration_seconds=45):
+#     Player.objects.all().update(stamina=100) # Reset stamina for all players before the half
+#     start_time = time.time()
+#     player_one = Player.objects.get(id=random.randint(2,12))
+    
+#     while time.time() - start_time < duration_seconds:
+#         action = random.choices(
+#         ['assist', 'kick'],
+#         weights=[80, 20],
+#         k=1
+#     )[0]
+        
+#         if action == 'assist':
+#             assisting(player_one)
+#             player_1 = assisting(player_one)
+#         # elif action == 'kick':
+#         #     kicking(player_1)
+
+
+#         print(f"time = { int(time.time() - start_time)} minutes")
+#         time.sleep(0.7)  # simulate 1-second intervals
+#         if int(time.time() - start_time) == 15:
+#             adding_time()
+
+# # class FirstHalf(APIView):
+# #     def get(self, request):
+# #         thread = threading.Thread(target=first_half_simulation, args=(15,))
+# #         thread.start()
+# #         return Response({"status": "success", "message": "First half simulation started for 45 seconds"})
+# # /////////////////////////////////////////////////////////////////////////////
+
+ 
+ barca_resp = barca_squad(request)
+    juve_resp = juve_squad(request)
+
+    barca_text = barca_resp.content.decode()
+    juve_text = juve_resp.content.decode()
+
+    output_lines = []
+    output_lines.append("==== Barcelona Starting Lineup ====\n")
+    output_lines.append(barca_text)
+    output_lines.append("\n==== Juventus Starting Lineup ====\n")
+    output_lines.append(juve_text)
+
+
+    
+    current_team = random.choice(["Barcelona", "Juventus"])
+    output_lines.append("\n**** SCORE: 0 - 0 ****\n")
+    output_lines.append(f"The match will be started by {current_team}\n\n")
+    print(f"\n**** SCORE: 0 - 0 ****")
+    print(f"The match will be started by {current_team}\n")
+
+    BARCA_IDS = list(range(2, 12))
+    JUVE_IDS = list(range(23, 34))
+  
+  # Այստեղ լինելու ա մեր հիմնական ֆունկցիան
+    score = [0, 0]
+    
+    assisit_shoot(duration_seconds=25)
+    adding_time() 
+
+
+    final_text = "<pre>" + "".join(output_lines) + "</pre>"
+    return HttpResponse(final_text,adding_time())
